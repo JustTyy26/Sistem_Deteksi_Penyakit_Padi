@@ -1,4 +1,9 @@
 """
+"""
+Repository link: https://github.com/JustTyy26/Sistem_Deteksi_Penyakit_Padi
+"""
+/*************  ✨ Smart Paste 📚  *************/
+/*******  6e1ba938-a978-4e97-b757-1c601d857450  *******/
 Script untuk memperbaiki cell pengujian di Sistem_Deteksi_Penyakit_Padi.ipynb:
 - 10 sampel total
 - Setiap kelas penyakit: 3 sampel (Grade 1, 2, 3) 
