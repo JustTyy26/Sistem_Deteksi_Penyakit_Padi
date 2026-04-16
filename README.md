@@ -42,7 +42,3 @@ Sistem ini mampu mendeteksi 4 kondisi daun padi, yaitu:
    python app.py
    ```
 5. Buka browser dan akses **`http://localhost:5000`** (atau sesuai port yang tampil di terminal).
-
-## 👨‍💻 Penulis
-**Muhammad Fathi Farhat**
-Tugas Akhir - 2024/2025
