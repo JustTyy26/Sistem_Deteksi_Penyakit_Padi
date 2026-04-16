@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f2027">
+    <title>🌾 Deteksi Penyakit Padi AI</title>
+    <meta name="description" content="Sistem AI untuk mendeteksi penyakit pada tanaman padi menggunakan gambar daun">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🌾 Deteksi Penyakit Padi</h1>
+            <p class="subtitle">Powered by AI</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Model Selection -->
+            <div class="model-selector">
+                <label for="model-select">Model AI:</label>
+                <select id="model-select">
+                    <option value="efficientnet" selected>EfficientNetV2-S (Rekomendasi)</option>
+                    <option value="resnet">ResNet50</option>
+                </select>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="camera">
+                    <span class="tab-icon">📷</span>
+                    <span class="tab-text">Kamera</span>
+                </button>
+                <button class="tab-btn" data-tab="upload">
+                    <span class="tab-icon">📁</span>
+                    <span class="tab-text">Upload</span>
+                </button>
+            </div>
+
+            <!-- Camera Tab -->
+            <div id="camera-tab" class="tab-content active">
+                <div class="camera-container">
+                    <video id="camera-video" autoplay playsinline></video>
+                    <canvas id="camera-canvas" style="display: none;"></canvas>
+                    <div id="camera-placeholder" class="camera-placeholder">
+                        <span>📷</span>
+                        <p>Klik tombol di bawah untuk memulai kamera</p>
+                    </div>
+                </div>
+                <div class="camera-controls">
+                    <button id="start-camera-btn" class="btn btn-secondary">
+                        <span>🎥</span> Mulai Kamera
+                    </button>
+                    <button id="capture-btn" class="btn btn-primary" disabled>
+                        <span>📸</span> Ambil Foto
+                    </button>
+                    <button id="switch-camera-btn" class="btn btn-icon" title="Ganti Kamera" style="display: none;">
+                        🔄
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload-tab" class="tab-content">
+                <div class="upload-container" id="drop-zone">
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                    <div class="upload-placeholder" id="upload-placeholder">
+                        <span class="upload-icon">📂</span>
+                        <p>Klik atau seret gambar ke sini</p>
+                        <p class="upload-hint">JPG, PNG (Maks. 10MB)</p>
+                    </div>
+                    <img id="preview-image" class="preview-image" style="display: none;">
+                </div>
+                <button id="upload-btn" class="btn btn-primary" disabled>
+                    <span>🔍</span> Mulai Diagnosa
+                </button>
+            </div>
+
+            <!-- Captured Image Preview -->
+            <div id="captured-preview" class="captured-preview" style="display: none;">
+                <h3>📷 Foto yang Diambil</h3>
+                <img id="captured-image" alt="Captured">
+                <div class="captured-actions">
+                    <button id="retake-btn" class="btn btn-secondary">
+                        <span>🔄</span> Ambil Ulang
+                    </button>
+                    <button id="diagnose-btn" class="btn btn-primary">
+                        <span>🔍</span> Diagnosa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading - Improved -->
+            <div id="loading" class="loading" style="display: none;">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">🔬 Menganalisis gambar...</p>
+                    <div class="loading-progress">
+                        <div class="loading-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div id="result-card" class="result-card" style="display: none;">
+                <h3 class="result-title">📋 Hasil Diagnosa AI</h3>
+
+                <!-- Image Comparison -->
+                <div id="image-comparison" class="image-comparison">
+                    <div class="image-box">
+                        <img id="result-original" alt="Foto Asli">
+                        <span class="image-label">Foto Asli</span>
+                    </div>
+                    <div class="image-box">
+                        <img id="result-mask" alt="Area Penyakit">
+                        <span class="image-label">Area Penyakit</span>
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-item">
+                        <span class="result-label">Jenis Penyakit</span>
+                        <span id="disease-name" class="result-value disease-name"></span>
+                        <span id="disease-name-id" class="result-subtitle"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Tingkat Keparahan</span>
+                        <span id="severity" class="result-value severity"></span>
+                    </div>
+                </div>
+
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Akurasi Model</span>
+                        <span id="confidence" class="stat-value"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Kerusakan Fisik</span>
+                        <span id="damage-ratio" class="stat-value"></span>
+                    </div>
+                </div>
+
+                <div id="disease-info" class="disease-info">
+                    <h4>ℹ️ Informasi</h4>
+                    <p id="disease-desc"></p>
+                    <h4>💊 Penanganan</h4>
+                    <p id="disease-treatment"></p>
+                </div>
+
+                <div id="alert-message" class="alert"></div>
+
+                <button id="new-scan-btn" class="btn btn-primary btn-block">
+                    <span>🔄</span> Scan Baru
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sistem Deteksi Penyakit Padi | Powered by TensorFlow</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

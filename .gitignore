@@ -1,0 +1,26 @@
+# Dataset folders
+dataset_ta_final/
+Rice_Leaf_AUG/
+Rice_Leaf_AUG_split/
+
+# Model files (often too large for GitHub)
+*.h5
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments (if any)
+venv/
+env/
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Compressed and Document files
+*.zip
+*.doc
+*.docx
+*.txt
+*.pdf
